@@ -1,0 +1,5 @@
+astroquery>=0.4.11
+astropy>=5.2
+pandas>=2.0
+duckdb>=1.0
+pyarrow>=12.0
