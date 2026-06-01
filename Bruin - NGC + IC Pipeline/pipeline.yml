@@ -1,0 +1,24 @@
+name: bruin-ngc-ic
+schedule: daily
+start_date: "2023-03-20"
+catchup: false
+
+default_connections:
+    duckdb: "duckdb-default"
+    
+# Pipeline variables (editable):
+variables:
+    vizier_ngc_catalog: "VII/1B"        # Vizier ID used for NGC ingest
+    vizier_ic_catalog: "VII/239A"       # Vizier ID used for IC ingest
+    raw_dir: "raw"                      # base directory for raw outputs
+    raw_ngc_path: "raw/ngc/ngc.parquet"
+    raw_ic_path: "raw/ic/ic.parquet"
+    warehouse_file: "warehouse/bruin.duckdb"
+    fetch_timeout_seconds: 60
+    fetch_retries: 3
+    parallelism: 4
+    include_types: ["Galaxy","Nebula","Globular Cluster","Open Cluster","Planetary Nebula","Supernova Remnant"]
+
+# Notes:
+# - Edit `variables` to change catalog IDs, output filenames, or runtime tuning.
+# - `include_types` are used by the SQL assets to filter/normalize object classes.

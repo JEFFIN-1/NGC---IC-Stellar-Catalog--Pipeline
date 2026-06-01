@@ -71,3 +71,33 @@ Additional columns such as `BMag`, `VMag`, `SizeMax`, `SizeMin`, `PA`, `Constell
 ## Notes
 - This pipeline uses Vizier catalogs `VII/1B` for NGC and `VII/239A` for IC.
 - Raw catalog files are written as Parquet for reliable downstream DuckDB usage.
+
+## Deep Sky Objects (catalog mapping)
+
+The pipeline normalizes common deep-sky object classes found in NGC/IC into a small set of categories used by the warehouse tables. Below is the canonical list and a short mapping example that illustrates how the SQL assets map raw `Type` values into normalized categories.
+
+| Category | Example raw `Type` values |
+|---|---|
+| Galaxies | `G`, `Galaxy`, `Sb`, `E`, `S` |
+| Nebulae | `Neb`, `HII`, `diffuse`, `reflection` |
+| Globular clusters | `GC`, `gCl` |
+| Open clusters | `OC`, `Open Cluster` |
+| Planetary nebulae | `PN` |
+| Supernova remnants | `SNR`, `SN remnant` |
+
+Example SQL mapping (informational):
+
+```sql
+CASE
+	WHEN lower(type) LIKE '%galaxy%' OR type IN ('G','Sb','E') THEN 'Galaxy'
+	WHEN lower(type) LIKE '%neb%' OR lower(type) LIKE '%hii%' THEN 'Nebula'
+	WHEN lower(type) LIKE '%glob%' OR type = 'GC' THEN 'Globular Cluster'
+	WHEN lower(type) LIKE '%open%' OR type = 'OC' THEN 'Open Cluster'
+	WHEN type = 'PN' THEN 'Planetary Nebula'
+	WHEN lower(type) LIKE '%sn%' OR type = 'SNR' THEN 'Supernova Remnant'
+	ELSE 'Other'
+END AS normalized_type
+```
+
+This mapping is implemented in the SQL assets and can be adjusted to suit specific classification rules or scientific needs.
+
